@@ -1,3 +1,5 @@
+# This file is used to connect to the database and create a session to interact with the database
+
 from sqlalchemy import create_engine, MetaData # type: ignore
 from sqlalchemy.orm import sessionmaker # type: ignore
 from sqlalchemy.ext.declarative import declarative_base # type: ignore

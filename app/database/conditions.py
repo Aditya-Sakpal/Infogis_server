@@ -1,6 +1,20 @@
-from sqlalchemy import or_, and_
+#This file contains the functions to build the conditions for the read, update and delete operations.
 
+from sqlalchemy import or_, and_
+from app.utils.logger import log_performance
+
+@log_performance
 def read_build_conditions(table, conditions):
+    
+    """
+        This function is used to build the conditions for the read operation.
+        Args : 
+            table : SQLAlchemy Table object.
+            conditions : Dictionary of conditions.
+        Returns :
+            SQLAlchemy condition clause.
+    """
+    
     if isinstance(conditions, dict):
         logic = conditions.get("logic", "and").lower()  # Default to 'and' logic
         subconditions = conditions.get("conditions", [])
@@ -43,14 +57,15 @@ def read_build_conditions(table, conditions):
 
     return None
 
-
+@log_performance
 def update_build_conditions(table, conditions):
     """
-    Recursively builds SQLAlchemy conditions to support complex query conditions like $or, $and, $gt, $lt, etc.
-    
-    :param table: SQLAlchemy Table object.
-    :param conditions: Dictionary of conditions.
-    :return: SQLAlchemy condition clause.
+        This function is used to build the conditions for the update operation.
+        Args :
+            table : SQLAlchemy Table object.
+            conditions : Dictionary of conditions.
+        Returns :
+            SQLAlchemy condition clause.
     """
     if isinstance(conditions, dict):
         logic = conditions.get("$logic", "and").lower()  # Default to 'and' logic
@@ -95,13 +110,15 @@ def update_build_conditions(table, conditions):
     
     return None
 
+@log_performance
 def delete_build_conditions(table, conditions):
     """
-    Recursively builds SQLAlchemy conditions to support complex query conditions like $or, $and, $gt, $lt, etc.
-    
-    :param table: SQLAlchemy Table object.
-    :param conditions: Dictionary of conditions.
-    :return: SQLAlchemy condition clause.
+        This function is used to build the conditions for the delete operation.
+        Args :
+            table : SQLAlchemy Table object.
+            conditions : Dictionary of conditions.
+        Returns :
+            SQLAlchemy condition clause
     """
     if isinstance(conditions, dict):
         logic = conditions.get("$logic", "and").lower()  # Default to 'and' logic

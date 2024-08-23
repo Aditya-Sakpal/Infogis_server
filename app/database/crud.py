@@ -1,4 +1,4 @@
-# database/crud.py
+# This file contains functions to perform CRUD operations on database tables dynamically.
 
 from sqlalchemy import Table , update , delete
 from sqlalchemy.orm import Session
@@ -10,9 +10,25 @@ from sqlalchemy.exc import SQLAlchemyError
 from app.database.connect import engine
 from sqlalchemy.sql import func
 from app.database.conditions import read_build_conditions, update_build_conditions, delete_build_conditions
+from app.utils.logger import log_performance
 
-
+@log_performance
 def read_table(db: Session, table_name: str, columns: list = None, condition: dict = None):
+    
+    """
+        Reads records from the specified table dynamically based on complex conditions.
+        
+        Args : 
+        db : SQLAlchemy session.
+        table_name : The name of the table to read records from.
+        columns : A list of columns to select from the table.
+        condition : A dictionary of conditions to filter the rows to read.
+        
+        Returns :
+        A list of dictionaries representing the selected columns of the records that match the condition.
+    
+    """
+    
     # Reflect the table from the database
     table = Table(table_name, metadata, autoload_with=db.bind)
     
@@ -36,8 +52,23 @@ def read_table(db: Session, table_name: str, columns: list = None, condition: di
     # Convert the result rows to dictionaries
     return [dict(row._mapping) for row in result]
 
-
+@log_performance
 def insert_record(db: Session, table_name: str, values: list, columns: list = None):
+    
+    """
+        Inserts records into the specified table dynamically.
+        
+        Args :
+        db : SQLAlchemy session.
+        table_name : The name of the table to insert records into.
+        values : A list of dictionaries representing the values to insert.
+        columns : A list of columns to insert values into.
+        
+        Returns :
+        A message indicating the success of the operation.
+        
+    """
+    
     # Reflect the table from the database
     table = Table(table_name, metadata, autoload_with=db.bind)
 
@@ -58,15 +89,20 @@ def insert_record(db: Session, table_name: str, values: list, columns: list = No
 
     return {"message": "Records inserted successfully"}
 
+@log_performance
 def update_table(db: Session, table_name: str, updates: dict, condition: dict = None):
     """
-    Updates records in the given table dynamically based on complex conditions.
-    
-    :param db: SQLAlchemy session.
-    :param table_name: The name of the table to update records.
-    :param updates: A dictionary of columns and their new values.
-    :param condition: A dictionary of conditions to filter the rows to update.
-    :return: Number of rows updated or an error message.
+        Updates records in the given table dynamically based on complex conditions.
+        
+        Args : 
+        db : SQLAlchemy session.
+        table_name : The name of the table to update records in.
+        updates : A dictionary of column-value pairs to update.
+        condition : A dictionary of conditions to filter the rows to update.
+        
+        Returns :
+        The number of rows updated or an error message.
+        
     """
     try:
         # Reflect the table from the database
@@ -89,15 +125,19 @@ def update_table(db: Session, table_name: str, updates: dict, condition: dict = 
     except SQLAlchemyError as e:
         db.rollback()
         return {"error": str(e)}
-
+    
+@log_performance
 def delete_records(db: Session, table_name: str, condition: dict):
     """
-    Deletes records from the specified table dynamically based on complex conditions.
-    
-    :param db: SQLAlchemy session.
-    :param table_name: The name of the table from which to delete records.
-    :param condition: A dictionary of conditions to filter the rows to delete.
-    :return: The number of rows deleted or an error message.
+        Deletes records from the specified table dynamically based on complex conditions.
+        
+        Args : 
+        db : SQLAlchemy session.
+        table_name : The name of the table to delete records from.
+        condition : A dictionary of conditions to filter the rows to delete.
+        
+        Returns :
+        The number of rows deleted or an error message.
     """
     try:
         # Reflect the table from the database
@@ -123,7 +163,22 @@ def delete_records(db: Session, table_name: str, condition: dict):
         db.rollback()
         return {"error": str(e)}
 
+@log_performance
 def create_table(db: Session, table_name: str, columns: list, primary_key: list = None, foreign_keys: list = None):
+    """
+        Creates a table in the database dynamically.
+        
+        Args :
+        db : SQLAlchemy session.
+        table_name : The name of the table to create.
+        columns : A list of Column objects representing the table columns.
+        primary_key : A list of column names to set as the primary key.
+        foreign_keys : A list of ForeignKey objects representing foreign key constraints.
+        
+        Returns :
+        A message indicating the success of the operation.
+    """
+    
     # Define a list to hold Column objects
     table_columns = []
 
